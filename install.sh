@@ -33,7 +33,11 @@ export PATH=${PATH}:/cmd/Apache24/bin
 # 配置apache
 SRVROOT=$(cygpath -m /cmd/Apache24)
 sed -i -r "s|^(\s*Define SRVROOT \")[^\"]+(\")|\1${SRVROOT}\2|" /cmd/Apache24/conf/httpd.conf
-sed -i -r "s|^#?\s*(ServerName\s+)\S+\s*$|\1localhost:80|" /cmd/Apache24/conf/httpd.conf
+sed -i -r "s|^\s*#?\s*(ServerName\s+)\S+\s*$|\1localhost:80|" /cmd/Apache24/conf/httpd.conf
+sed -i -r "s|^\s*#(AddHandler cgi-script(\s+\S+)*)|\1 .pl .py|" /cmd/Apache24/conf/httpd.conf
+sed -i -r "/<Directory \"\\$\{SRVROOT\}\/cgi-bin\">/,/<\/Directory>/{
+s|^(\s*Options\s+)None|\1+ExecCGI|
+}" /cmd/Apache24/conf/httpd.conf
 
 # 检查Alist服务
 SRV_HTTPD_STAT=$(nssm status ${SRV_HTTPD_NAME} 2>/dev/null)
